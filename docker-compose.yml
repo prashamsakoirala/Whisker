@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - DB_USER=myuser
+      - DB_PASSWORD=secret
+      - DB_NAME=mydb
+      - DB_HOST=db
+      - DB_PORT=5432
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - "5432"
+
+volumes:
+  postgres_data:
