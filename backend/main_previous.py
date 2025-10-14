@@ -18,8 +18,6 @@
 # # Set up OAuth, Spotify also uses OAuth
 # scope = "user-read-private playlist-modify-private user-modify-playback-state user-read-recently-played user-read-currently-playing user-top-read"
 # oauth = SpotifyOAuth(
-#     client_id="2b6316217836453ab2c4b124287ee025",
-#     client_secret="e4340cf6cb7e44fab462ba9c6f8e674b",
 #     redirect_uri="http://127.0.0.1:8000/callback",
 #     scope=scope
 # )

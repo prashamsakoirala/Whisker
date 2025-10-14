@@ -57,7 +57,6 @@ def create_user_registration(db: Session, user_id: uuid.UUID, status: Registrati
 def get_user_registration(db: Session, user_id: uuid.UUID) -> Optional[UserRegistration]:
 	return db.query(UserRegistration).filter(UserRegistration.user_id == user_id).first()
 
-
 def update_user_registration(db: Session, user_id: uuid.UUID, status: Optional[RegistrationStatus] = None) -> Optional[UserRegistration]:
 	reg = get_user_registration(db, user_id)
 	if not reg:
