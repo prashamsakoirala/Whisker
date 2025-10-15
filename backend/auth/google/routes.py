@@ -1,8 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 from auth.google.oauth import oauth
 from database import get_db
 from starlette.requests import Request
+from users.crud import get_user_by_email, create_user, get_user_registration, create_user_registration
+from users.models import User
+from auth.tokens import create_access_token, create_refresh_token
+from auth.schemas import Token, TokenPayload
+from auth.types import TokenScope
 
 router = APIRouter(prefix="/auth/google", tags=["auth"])
 
@@ -14,7 +19,7 @@ async def get_google_auth(request: Request):
     return response
 
 @router.get("/callback", name="auth.google.callback")
-async def get_google_auth_callback(request: Request, db: Session = Depends(get_db)):
+async def get_google_auth_callback(request: Request, response: Response, db: Session = Depends(get_db)):
     token = await oauth.google.authorize_access_token(request)
     
     user_info = token.get('userinfo')
@@ -23,17 +28,18 @@ async def get_google_auth_callback(request: Request, db: Session = Depends(get_d
         user_info = resp.json()
     
     # create new user with user_info it it does not exist in DB
+    user = get_user_by_email(db, email=user_info['email'])
+    if not user:
+        user = create_user(db, user_info.get('name'), user_info.get('email'), user_info.get('picture'))
+        create_user_registration(db, user.id) # create registration entry for new user
+        
+    access_token = create_access_token(TokenPayload(user_id=str(user.id), scope=TokenScope.ACCESS.value))
+    refresh_token = create_refresh_token(TokenPayload(user_id=str(user.id), scope=TokenScope.REFRESH.value))
 
+    response.set_cookie(key="access_token", value=access_token, httponly=True, secure=True, samesite="lax")
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=True, samesite="lax")
 
-    
-    request.session['user'] = {
-        'email': user_info.get('email'),
-        'name': user_info.get('name'),
-        'picture': user_info.get('picture'),
-    }
-    request.session['token'] = token
-    
-    return token
+    return {"message": "Login successful"}
 
 # from fastapi import APIRouter, Depends
 # from fastapi.responses import RedirectResponse

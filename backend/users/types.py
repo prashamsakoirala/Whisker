@@ -1,10 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
-from typing import Annotated, Optional
-import uuid
-from datetime import datetime
-from models.user_model import *
 import enum
-from typing import List
 
 class Provider(str, enum.Enum):
     GOOGLE = "google"

@@ -1,11 +1,34 @@
+from fastapi import APIRouter, Depends, HTTPException
+from dependencies import get_current_user
+from sqlalchemy.orm import Session
+from database import get_db
+from models import User
+from schemas import UserResponse, UserRegistrationResponse
+
+router = APIRouter(prefix="/users", tags=["users"])
 
 # GET /users/me/
+@router.get("/me", response_model=UserResponse)
+async def get_current_user(current_user: User = Depends(get_current_user)):
+    # Check for value errors in the dependency and raise corresponding HTTP exceptions
+    return UserResponse(from_orm=current_user)
+
 # GET /users/me/registration
+@router.get("/me/registration", response_model=UserRegistrationResponse)
+async def get_user_registration(current_user: User = Depends(get_current_user)):
+    registration = get_user_registration(current_user.id)
+    if not registration:
+        raise HTTPException(status_code=404, detail="Registration not found")
+    return UserRegistrationResponse(from_orm=registration)
+
 # GET /users/me/cats # gets all the user's cats
+
 # GET /users/me/cats/{cat_id}/partner # gets partner for a specific cat
 
 
+
 # GET /users/all # admin only, gets all users
+    ## Need crud for all users
 # GET /users/{user_id} # admin only, gets specific user
 # DELETE /users/{user_id} # admin only, deletes specific user
 # PATCH /users/{user_id} # admin only, updates specific user

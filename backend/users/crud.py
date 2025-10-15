@@ -1,4 +1,3 @@
-
 from sqlalchemy.orm import Session
 from typing import Optional, List
 import uuid
@@ -67,7 +66,6 @@ def update_user_registration(db: Session, user_id: uuid.UUID, status: Optional[R
 	db.commit()
 	db.refresh(reg)
 	return reg
-
 
 def delete_user_registration(db: Session, user_id: uuid.UUID) -> bool:
 	reg = get_user_registration(db, user_id)

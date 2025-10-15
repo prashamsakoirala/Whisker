@@ -1,15 +1,4 @@
-from fastapi import Cookie, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, not_
-import jwt
-from jwt import PyJWTError
-from database import get_db
-from models.user_model import User, Partnership
-from models.cat_model import *
-from auth.config import SECRET_KEY, ALGORITHM
-from auth.tokens import create_access_token
-from schemas.token_schema import *
 from users.crud import *
 from users.schemas import *
 # business logic layer, calls external apis, etc
