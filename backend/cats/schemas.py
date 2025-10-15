@@ -2,7 +2,6 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import Annotated, List
 import uuid
-from models.cat_model import CatStateEnum, CatItemEnum, CatAnimationEnum
 
 # class CatStateRead(BaseModel):
 #     state : Annotated[CatStateEnum, Field(description="State of interest")]

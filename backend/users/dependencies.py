@@ -1,4 +1,4 @@
-from fastapi import Depends, Cookie
+from fastapi import Depends, Cookie, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import jwt
@@ -7,31 +7,23 @@ from database import get_db
 from auth.config import SECRET_KEY, ALGORITHM
 from users.crud import get_user
 
-# get_current_user
-# What does the following do?
-
-# Checks to make sure that there is an Authorization header with a valid JWT token in the request
-# How does this work??
-# Used through cookies instead of sending a token...? or used with token?
 async def get_current_user(access_token: str = Cookie(None), db: Session = Depends(get_db)):
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
     try:
-        # Get payload from token
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        # Get User ID from payload
-        user_id = payload.get("sub")
-        # If user_id is None
+        user_id = payload.get("user_id")
         if user_id is None:
-            raise ValueError("Invalid token: missing user ID")
+            raise HTTPException(status_code=401, detail="Invalid token: missing user ID")
 
-        # If scope is not access_token
         if payload.get("scope") != "access_token":
-            raise ValueError("Invalid token: incorrect scope")
+            raise HTTPException(status_code=401, detail="Invalid token: incorrect scope")
         
-    except PyJWTError:
-        raise ValueError("Invalid token")
+    except PyJWTError as e:
+        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
-    # TODO use crud operations for the following instead of direct database access
-    user = get_user(db = db, user_id=user_id)
+    user = get_user(db=db, user_id=user_id)
     if not user:
-        raise ValueError("User not found")
+        raise HTTPException(status_code=404, detail="User not found")
     return user

@@ -9,10 +9,9 @@ oauth.register(
     name='google',
     client_id=GOOGLE_CLIENT_ID,
     client_secret=GOOGLE_CLIENT_SECRET,
-    access_token_url=GOOGLE_TOKEN_REQUEST_URI,
-    authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
     client_kwargs={
-        'scope': ' '.join(GOOGLE_SCOPES),
+        'scope': 'openid email profile',
         'access_type': 'offline',
         'prompt': 'consent',
     }

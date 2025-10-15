@@ -60,7 +60,6 @@ class UserAuthorizationUpdate(UserAuthorizationBase):
 
 class UserAuthorizationResponse(UserAuthorizationBase):
     user_id: Annotated[uuid.UUID, Field(description="User's unique ID")]
-    id: Annotated[uuid.UUID, Field(description="Authorization record ID")]
     updated_at: Annotated[datetime, Field(description="Last updated timestamp")]
 
     class Config:

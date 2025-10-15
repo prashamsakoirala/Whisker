@@ -9,16 +9,16 @@ class Access(str, enum.Enum):
     ADMIN = "admin"
 
 class AuthorizationStatus(str, enum.Enum):
-    ACTIVE = "active"           # token is present and usable
-    EXPIRED = "expired"         # token expired and needs refresh
-    REVOKED = "revoked"         # token was revoked by user/provider
-    MISSING = "missing"         # no token stored
+    ACTIVE = "active"           
+    EXPIRED = "expired"         
+    REVOKED = "revoked"         
+    MISSING = "missing"         
 
 class RegistrationStatus(str, enum.Enum):
-    SIGNED_IN = "signed_in"                # user signed in with Google
-    INVITATION_SENT = "invitation_sent"    # user entered partner's email
-    INVITATION_ACCEPTED = "invitation_accepted"    # waiting for partner acceptance
-    NAMED_PET = "named_pet"                # pet named
-    SPOTIFY_LINKED = "spotify_linked"      # spotify linked (per user)
-    PERSONALITY_GENERATED = "personality_generated"  # personality generated
+    SIGNED_IN = "signed_in"                
+    INVITATION_SENT = "invitation_sent"   
+    INVITATION_ACCEPTED = "invitation_accepted"   
+    NAMED_PET = "named_pet"               
+    SPOTIFY_LINKED = "spotify_linked"     
+    PERSONALITY_GENERATED = "personality_generated"  
     COMPLETE = "complete"

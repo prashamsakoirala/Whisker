@@ -8,9 +8,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: Annotated[str, Field()]
     exp: Annotated[int, Field()]
-    scope: Annotated[str, Field()]  # helpful for distinguishing access vs refresh
+    scope: Annotated[str, Field()]
 
-# Payload model used for encoding/decoding tokens
 class TokenPayload(BaseModel):
     user_id: str
     scope: str
