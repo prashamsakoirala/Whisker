@@ -92,16 +92,12 @@ def create_user_authorization(db: Session, user_id: uuid.UUID, provider: Provide
 	return auth
 
 
-def get_user_authorization(db: Session, authorization_id: uuid.UUID) -> Optional[UserAuthorization]:
-	return db.query(UserAuthorization).filter(UserAuthorization.id == authorization_id).first()
-
-
-def get_user_authorizations(db: Session, user_id: uuid.UUID) -> List[UserAuthorization]:
+def get_user_authorization(db: Session, user_id: uuid.UUID) -> List[UserAuthorization]:
 	return db.query(UserAuthorization).filter(UserAuthorization.user_id == user_id).all()
 
 
-def update_user_authorization(db: Session, authorization_id: uuid.UUID, refresh_token: Optional[str] = None, expires_at: Optional[datetime] = None, status: Optional[AuthorizationStatus] = None) -> Optional[UserAuthorization]:
-	auth = get_user_authorization(db, authorization_id)
+def update_user_authorization(db: Session, user_id: uuid.UUID, refresh_token: Optional[str] = None, expires_at: Optional[datetime] = None, status: Optional[AuthorizationStatus] = None) -> Optional[UserAuthorization]:
+	auth = get_user_authorization(db, user_id)
 	if not auth:
 		return None
 	if refresh_token is not None:

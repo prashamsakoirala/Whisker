@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import Depends, Cookie
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import jwt
@@ -11,12 +11,12 @@ from users.crud import get_user
 # What does the following do?
 
 # Checks to make sure that there is an Authorization header with a valid JWT token in the request
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+# How does this work??
+# Used through cookies instead of sending a token...? or used with token?
+async def get_current_user(access_token: str = Cookie(None), db: Session = Depends(get_db)):
     try:
         # Get payload from token
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         # Get User ID from payload
         user_id = payload.get("sub")
         # If user_id is None

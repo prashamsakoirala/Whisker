@@ -17,6 +17,8 @@ def register_user(db: Session, user: UserCreate) -> UserResponse:
 
 # add user authorization token
 # just add an entry without removing/editing existing ones
+# incorrect get user authorization
+# TODO FIX
 def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) -> UserAuthorization:
     existing = get_user_authorization(db, token.user_id, token.provider, token.status == AuthorizationStatus.ACTIVE)
     if existing:

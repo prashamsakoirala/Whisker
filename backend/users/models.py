@@ -36,8 +36,7 @@ class UserRegistration(Base):
 class UserAuthorization(Base):
 	__tablename__ = "user_authorizations"
 
-	id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True)
-	user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+	user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, primary_key=True)
 	provider: Mapped[Provider] = mapped_column(SQLEnum(Provider, name="provider"), nullable=False)
 	refresh_token: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 	expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
