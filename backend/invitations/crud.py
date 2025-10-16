@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from .models import Invitations
 from .types import InvitationStatus
-from config import INVITATION_TOKEN_EXPIRE_MINUTES
+from .config import INVITATION_TOKEN_EXPIRE_MINUTES
 from users.crud import get_user_by_email
 
 

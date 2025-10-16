@@ -1,6 +1,6 @@
 import jwt
 from .config import SECRET_KEY, SALT, INVITATION_TOKEN_EXPIRE_MINUTES, ALGORITHM
-from .schemas import InvitationTokenPayload
+from .schemas import InvitationTokenPayload, InvitationTokenDecoded
 from datetime import timedelta, datetime, timezone
 
 def create_invitation_token(data: InvitationTokenPayload):
@@ -9,10 +9,16 @@ def create_invitation_token(data: InvitationTokenPayload):
     to_encode.update({"exp" : expire})
     return jwt.encode(to_encode, SECRET_KEY + SALT, algorithm=ALGORITHM)
 
-def decode_invitation_token(token: str):
+def decode_invitation_token(token: str) -> InvitationTokenDecoded:
     try:
         payload = jwt.decode(token, SECRET_KEY + SALT, algorithms=[ALGORITHM])
-        return InvitationTokenPayload.model_validate(payload)
+        # Extract exp and convert to expires_at
+        expires_at = datetime.fromtimestamp(payload['exp'], tz=timezone.utc)
+        return InvitationTokenDecoded(
+            invitee_email=payload['invitee_email'],
+            inviter_email=payload['inviter_email'],
+            expires_at=expires_at
+        )
     except jwt.ExpiredSignatureError:
         raise ValueError("Token has expired")
     except jwt.PyJWTError:

@@ -21,3 +21,9 @@ class InvitationTokenDecoded(InvitationBase):
 class InvitationResponse(InvitationBase):
     status: InvitationStatus
     expires_at: datetime
+
+class InvitationDisplay(InvitationResponse):
+    inviter_name: str
+    invitee_name: str
+    inviter_picture: str
+    invitee_picture: str

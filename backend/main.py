@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
@@ -5,7 +6,10 @@ from starlette.middleware.sessions import SessionMiddleware
 from auth.config import SECRET_KEY as APP_SECRET_KEY
 from auth.google import routes as auth_google_routes
 from users import routes as user_routes
+from invitations import routes as invitation_routes
 
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
@@ -18,5 +22,4 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_google_routes.router)
 app.include_router(user_routes.router)
-
-
+app.include_router(invitation_routes.router)

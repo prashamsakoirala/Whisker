@@ -11,3 +11,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 SALT = os.getenv("SALT")
 INVITATION_TOKEN_EXPIRE_MINUTES = 5
+
+# Email configuration
+EMAIL = os.getenv("GMAIL_USER")
+APP_PASSWORD = os.getenv("GMAIL_PASSWORD")

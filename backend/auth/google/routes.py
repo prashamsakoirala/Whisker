@@ -6,7 +6,7 @@ from auth.config import GOOGLE_REDIRECT_URI
 from users.schemas import UserAuthorizationCreate
 from database import get_db
 from starlette.requests import Request
-from users.crud import get_user_by_email, create_user, create_user_registration
+from users.crud import get_user_by_email, create_user, create_user_registration, get_user_registration
 from users.types import Provider, AuthorizationStatus
 from auth.tokens import create_access_token, create_refresh_token, hash_token
 from users.services import add_user_authorization_token
@@ -46,6 +46,8 @@ async def get_google_auth_callback(request: Request, db: Session = Depends(get_d
     if not user:
         user = create_user(db, user_name, user_email, user_picture)
         create_user_registration(db, user.user_id)
+        redirect_url = "/onboarding"
+    elif get_user_registration(db, user.user_id).status != "COMPLETED":
         redirect_url = "/onboarding"
     else:
         redirect_url = "/home"
