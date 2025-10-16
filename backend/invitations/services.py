@@ -73,6 +73,15 @@ def verify_invitee(db: Session, token: str, verifier_email: EmailStr) -> Invitat
         raise ValueError("User not found")
     return InvitationResponse(invitee_email=invitation.invitee_email, inviter_email=invitation.inviter_email, status=InvitationStatus.PENDING, expires_at=invitation.expires_at)
 
+def verify_inviter(db: Session, token: str, verifier_email: EmailStr) -> InvitationResponse:
+    invitation = verify_invitation_token(db, token)
+    if invitation.inviter_email != verifier_email:
+        raise ValueError("Invalid user")
+    inviter_user = get_user_by_email(db, verifier_email)
+    if not inviter_user:
+        raise ValueError("User not found")
+    return InvitationResponse(invitee_email=invitation.invitee_email, inviter_email=invitation.inviter_email, status=InvitationStatus.PENDING, expires_at=invitation.expires_at)
+
 
 def verify_invitation_token(db: Session, token: str) -> InvitationTokenDecoded:
     decoded_token = decode_invitation_token(token=token) # returns InvitationTokenDecoded with expires_at
@@ -84,36 +93,36 @@ def verify_invitation_token(db: Session, token: str) -> InvitationTokenDecoded:
     return decoded_token
 
 # check if pending before accepting in routes layer
-def accept_invitation(db: Session, token: str, acceptor_email: str) -> InvitationResponse:
+def accept_invitation(db: Session, token: str, invitee_email: str) -> InvitationResponse:
     verification = verify_invitation_token(db, token)
     if not verification:
         raise ValueError("Invalid invitation")
 
-    if not verify_invitee(db=db, token=token, verifier_email=acceptor_email):
+    if not verify_invitee(db=db, token=token, verifier_email=invitee_email):
         raise ValueError("Invalid user")
         
     updated_invitation = update_invitation_status(db, token, InvitationStatus.ACCEPTED)
     return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=get_user(db, updated_invitation.inviter_id).email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
 
 
-def decline_invitation(db: Session, invitation_code: str, decliner_email: str) -> InvitationResponse:
+def decline_invitation(db: Session, invitation_code: str, invitee_email: str) -> InvitationResponse:
     verification = verify_invitation_token(db, invitation_code)
     if not verification:
         raise ValueError("Invalid invitation")
 
-    if not verify_invitee(db=db, token=invitation_code, verifier_email=decliner_email):
+    if not verify_invitee(db=db, token=invitation_code, verifier_email=invitee_email):
         raise ValueError("Invalid user")
 
     updated_invitation = update_invitation_status(db, invitation_code, InvitationStatus.DECLINED)
     return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=get_user(db, updated_invitation.inviter_id).email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
 
-
-def revoke_invitation(db: Session, invitation_code: str, revoker_email: str) -> InvitationResponse:
+# only can be used by inviter to revoke
+def revoke_invitation(db: Session, invitation_code: str, inviter_email: str) -> InvitationResponse:
     verification = verify_invitation_token(db, invitation_code)
     if not verification:
         raise ValueError("Invalid invitation")
 
-    if not verify_invitee(db=db, token=invitation_code, verifier_email=revoker_email):
+    if not verify_inviter(db=db, token=invitation_code, verifier_email=inviter_email):
         raise ValueError("Invalid user")
 
     updated_invitation = update_invitation_status(db, invitation_code, InvitationStatus.REVOKED)

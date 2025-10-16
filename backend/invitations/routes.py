@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from users.dependencies import get_current_user
 from users.models import User
-from .services import generate_and_send_invitation, verify_invitee, get_invitation_information, accept_invitation
+from .services import generate_and_send_invitation, get_invitation_information, accept_invitation, revoke_invitation
 from .schemas import InvitationCreate, InvitationResponse, InvitationDisplay
 
 router = APIRouter(prefix="/invitations", tags=["invitations"])
@@ -26,8 +26,11 @@ async def retrieve_invitation_code(code: str, db: Session = Depends(get_db), cur
 # POST /invitations/accept (depends database, get current user, invitation code)
 @router.post("/accept", response_model=InvitationResponse)
 async def user_accept_invitation(code: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # need get the invitation should have the partner name, partner image
-    # need to add http errors?
+    # return new partnership as well once this is accepted
+    # TODO create new partnership in partnership service as a result of this posting
     return accept_invitation(db=db, token=code, acceptor_email=current_user.email)
 
-# PATCH /invitations/revoke (revoking invitation)(depends database, get current user, invitation code)
+# PATCH /invitations/revoke (revoking invitation)(depends database, get current user has to equal inviter, invitation code)
+@router.patch("/revoke", response_model=InvitationResponse)
+async def user_revoke_invitation(code: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return revoke_invitation(db=db, invitation_code=code, inviter_email=current_user.email)
