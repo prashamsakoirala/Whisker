@@ -7,18 +7,20 @@ from database import Base
 from sqlalchemy.ext.associationproxy import association_proxy
 
 
-# class Cat(Base):
-#     __tablename__ = "cats"
+class Cat(Base):
+    __tablename__ = "cats"
 
-#     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-#     name: Mapped[str] = mapped_column(default = "Whiskers")
-#     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    name: Mapped[str] = mapped_column(default = "Whiskers")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+
+    ownership = relationship("Ownerships", back_populates="cat")
     
-#     state: Mapped[list['CatState']] = relationship(back_populates='cat')
-#     inventory: Mapped[list['CatInventory']] = relationship(back_populates='cat')
-#     animation: Mapped[list['CatAnimation']] = relationship(back_populates='cat')
-#     partnership: Mapped['Partnership'] = relationship(back_populates='cat')
-#     active_users = association_proxy('active_cat_association', 'user')
+    # state: Mapped[list['CatState']] = relationship(back_populates='cat')
+    # inventory: Mapped[list['CatInventory']] = relationship(back_populates='cat')
+    # animation: Mapped[list['CatAnimation']] = relationship(back_populates='cat')
+    # partnership: Mapped['Partnership'] = relationship(back_populates='cat')
+    # active_users = association_proxy('active_cat_association', 'user')
 
 #     active_cat_association: Mapped[list['ActiveCat']] = relationship(back_populates='cat')
 

@@ -1,9 +1,8 @@
 from sqlalchemy.orm import Session
 from users.crud import *
 from users.schemas import *
-# business logic layer, calls external apis, etc
 
-# register new user, make sure registration status is created along with authorization token...
+
 def register_user(db: Session, user: UserCreate) -> UserResponse:
     existing_user = get_user_by_email(db, user.email)
     if existing_user:
@@ -14,10 +13,7 @@ def register_user(db: Session, user: UserCreate) -> UserResponse:
 
     return UserResponse.model_validate(user)
 
-# add user authorization token
-# just add an entry without removing/editing existing ones
-# incorrect get user authorization
-# TODO FIX
+
 def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) -> UserAuthorization:
     existing = get_user_authorization(db, token.user_id, token.provider, token.status == AuthorizationStatus.ACTIVE)
     if existing:
@@ -28,9 +24,7 @@ def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) ->
     db.refresh(auth)
     return UserAuthorizationResponse.model_validate(auth)
 
-# register spotify
 
-# update user registration status
 def update_registration_status(db: Session, status: UserRegistrationUpdate) -> UserRegistrationResponse:
     current_status = get_user_registration(db, status.user_id)
     if not current_status:
@@ -41,31 +35,40 @@ def update_registration_status(db: Session, status: UserRegistrationUpdate) -> U
     reg = update_user_registration(db, status.user_id, status.status)
     return UserRegistrationResponse.model_validate(reg)
 
-# get user registration status
+
 def get_registration_status(db: Session, user_id: uuid.UUID) -> UserRegistrationResponse:
     reg = get_user_registration(db, user_id)
     if not reg:
         raise ValueError("User registration status not found")
     return UserRegistrationResponse.model_validate(reg)
 
+
 def update_user_refresh_token_status(db: Session, token: UserAuthorizationCreate) -> UserAuthorizationResponse:
-    # find the active authorization for this user/provider before updating
     existing = get_user_authorization(db, token.user_id, token.provider, AuthorizationStatus.ACTIVE)
     if not existing:
         raise ValueError(f"No active {token.provider} authorization token found for this user")
     auth = update_user_authorization(db, token.user_id, token.provider, token.refresh_token, token.expires_at, token.status)
     return UserAuthorizationResponse.model_validate(auth)
 
-# get user refresh token, defaults to active token if not input
+# gets the corresponding active token
 def get_user_refresh_token(db: Session, user_id: uuid.UUID, token_provider: str, token_status: AuthorizationStatus = AuthorizationStatus.ACTIVE) -> UserAuthorizationResponse:
     existing = get_user_authorization(db, user_id, token_provider, token_status)
     if not existing:
         raise ValueError(f"No {token_status} {token_provider} authorization token found for this user")
     return UserAuthorizationResponse.model_validate(existing)
 
+# how to return a list of them
+def get_user_all_active_refresh_token(db: Session, user_id: uuid.UUID) -> UserAuthorizationResponse:
+    existing = get_user_authorization(db, user_id, AuthorizationStatus.ACTIVE)
+    if not existing:
+        raise ValueError(f"No active authorization tokens found for this user")
+    # TODO FIX THIS, return the list of models
+    return
+    # return UserAuthorizationResponse.model_validate(existing)
+
 # TODO DO THIS ONCE YOU HAVE CRUD FOR SPOTIFY
 # get user music personality
-
+# register spotify
 # update user music personality
 
 # TODO DO THIS ONCE YOU HAVE CREATED CRUD FOR CATS AND PARTNERSHIPS

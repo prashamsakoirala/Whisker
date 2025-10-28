@@ -19,8 +19,6 @@ def get_tag_names_and_weights(tags):
     return [(tag.item.get_name(), int(tag.weight)) for tag in tags]
 
 def get_similar_artists(name):
-    tags_for_artist = get_tags(name)
-
     artist_obj = network.get_artist(name)
     similar_artists = artist_obj.get_similar(limit=5)
 

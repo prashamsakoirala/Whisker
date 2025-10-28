@@ -1,0 +1,1 @@
+# GET /partnerships/{id} i think this is the only thing i need to do?

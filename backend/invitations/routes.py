@@ -13,6 +13,11 @@ async def send_invitation(invitee_email: str, db: Session = Depends(get_db), cur
     inviter_email = current_user.email
     return generate_and_send_invitation(db=db, invitation_data=InvitationCreate(invitee_email=invitee_email, inviter_email=inviter_email))
 
+
+# this means you are deactivating the previous invitation and sending a new invitation, get the most recent sent invitation and then send it again
+@router.post("/resend", response_model=InvitationResponse)
+async def resend_invitation(invitee_email: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return
 # GET /invitations/ (depends database, get current user, invitation code)
 # need to implement get endpoint
 # get should be the current user is the invitee
@@ -28,7 +33,7 @@ async def retrieve_invitation_code(code: str, db: Session = Depends(get_db), cur
 async def user_accept_invitation(code: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # return new partnership as well once this is accepted
     # TODO create new partnership in partnership service as a result of this posting
-    return accept_invitation(db=db, token=code, acceptor_email=current_user.email)
+    return accept_invitation(db=db, token=code, invitee_email=current_user.email)
 
 # PATCH /invitations/revoke (revoking invitation)(depends database, get current user has to equal inviter, invitation code)
 @router.patch("/revoke", response_model=InvitationResponse)

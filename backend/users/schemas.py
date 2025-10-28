@@ -42,7 +42,7 @@ class UserRegistrationResponse(UserRegistrationBase):
     class Config:
         from_attributes = True
 
-# TODO change expires at to datetimenow + duration in seconds maybe 1 week or so...
+
 class UserAuthorizationBase(BaseModel):
     provider: Annotated[Provider, Field(description="Authorization provider")]
     refresh_token: Annotated[Optional[str], Field(default=None, description="Refresh token")]

@@ -26,12 +26,16 @@ async def read_user_registration(current_user: User = Depends(get_current_user),
 
 # GET /users/me/cats/{cat_id}/partner # gets partner for a specific cat
 
-
+# ======================================================== ADMIN ONLY ========================================================
 
 # GET /users/all # admin only, gets all users
-    ## Need crud for all users
+
 # GET /users/{user_id} # admin only, gets specific user
+
 # DELETE /users/{user_id} # admin only, deletes specific user
+
 # PATCH /users/{user_id} # admin only, updates specific user
+
 # GET /users/{user_id}/cats # admin only, gets all the user's cats
+
 # GET /users/{user_id}/cats/{cat_id}/partner # admin only, gets partner for a specific cat

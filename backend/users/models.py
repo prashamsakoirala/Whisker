@@ -45,7 +45,7 @@ class UserAuthorization(Base):
 
 	user: Mapped['User'] = relationship(back_populates='authorizations')
 
-# Don't deal with this until we get to Spotify integration
+
 class UserMusicPersonality(Base):
 	__tablename__ = "user_music_personality"
 
