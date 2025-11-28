@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 import uuid
 from database import Base
 from sqlalchemy.ext.associationproxy import association_proxy
-from .types import CatItemEnum, CatStateEnum
+from .types import CatItemEnum, CatStateEnum, CatAnimationEnum
 
 class Cat(Base):
     __tablename__ = "cats"
@@ -32,6 +32,14 @@ class CatInventory(Base):
     inventory: Mapped[CatItemEnum] = mapped_column(primary_key=True)
     # add ranges to this?
     value: Mapped[int] = mapped_column()
+    last_updated: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+
+
+class CatAnimation(Base):
+    __tablename__ = "cat_animation"
+
+    cat_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cats.id"), primary_key=True)
+    animation: Mapped[CatAnimationEnum] = mapped_column()
     last_updated: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
 
 # class CatMusicPersonality(Base):

@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from users.crud import *
 from users.schemas import *
 
-
 # do not use model to validate this, edit it so that it doesn't use model to validate
 def register_user(db: Session, user: UserCreate) -> UserResponse:
     existing_user = get_user_by_email(db, user.email)
@@ -12,7 +11,7 @@ def register_user(db: Session, user: UserCreate) -> UserResponse:
     user = create_user(db, user.name, user.email, user.profile_picture)
     create_user_registration(db, user.user_id)
 
-    return UserResponse.model_validate(user)
+    return user
 
 
 def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) -> UserAuthorization:
@@ -23,7 +22,7 @@ def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) ->
     db.add(auth)
     db.commit()
     db.refresh(auth)
-    return UserAuthorizationResponse.model_validate(auth)
+    return auth
 
 
 def update_registration_status(db: Session, status: UserRegistrationUpdate) -> UserRegistrationResponse:
@@ -34,14 +33,14 @@ def update_registration_status(db: Session, status: UserRegistrationUpdate) -> U
         return UserRegistrationResponse.model_validate(current_status)
     
     reg = update_user_registration(db, status.user_id, status.status)
-    return UserRegistrationResponse.model_validate(reg)
+    return reg
 
 
 def get_registration_status(db: Session, user_id: uuid.UUID) -> UserRegistrationResponse:
     reg = get_user_registration(db, user_id)
     if not reg:
         raise ValueError("User registration status not found")
-    return UserRegistrationResponse.model_validate(reg)
+    return reg
 
 
 def update_user_refresh_token_status(db: Session, token: UserAuthorizationCreate) -> UserAuthorizationResponse:
@@ -49,14 +48,14 @@ def update_user_refresh_token_status(db: Session, token: UserAuthorizationCreate
     if not existing:
         raise ValueError(f"No active {token.provider} authorization token found for this user")
     auth = update_user_authorization(db, token.user_id, token.provider, token.refresh_token, token.expires_at, token.status)
-    return UserAuthorizationResponse.model_validate(auth)
+    return auth
 
 # gets the corresponding active token
 def get_user_refresh_token(db: Session, user_id: uuid.UUID, token_provider: str, token_status: AuthorizationStatus = AuthorizationStatus.ACTIVE) -> UserAuthorizationResponse:
     existing = get_user_authorization(db, user_id, token_provider, token_status)
     if not existing:
         raise ValueError(f"No {token_status} {token_provider} authorization token found for this user")
-    return UserAuthorizationResponse.model_validate(existing)
+    return existing
 
 # how to return a list of them
 def get_user_all_active_refresh_token(db: Session, user_id: uuid.UUID) -> UserAuthorizationResponse:

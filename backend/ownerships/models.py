@@ -9,7 +9,7 @@ class Ownerships(Base):
     __tablename__ = "ownerships"
 
     partnership_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("partnerships.partnership_id"), primary_key=True)
-    cat_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("cats.id"), primary_key=True)
+    cat_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("cats.id"))
 
     partnership = relationship("Partnerships", back_populates="ownerships")
     cat = relationship("Cat", back_populates="ownership")

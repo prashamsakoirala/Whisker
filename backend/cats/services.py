@@ -48,3 +48,6 @@
 
 #     except Exception as e:
 #         print("Error decrementing cat hunger: ", e)
+
+# get_all_cats_by_partnership
+# get_all_cats_by_user

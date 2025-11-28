@@ -66,19 +66,19 @@ class UserAuthorizationResponse(UserAuthorizationBase):
         from_attributes = True
 
 
-class UserMusicPersonalityBase(BaseModel):
-    genres: Annotated[Optional[List[str]], Field(default=None, description="Favorite genres")]
-    artists: Annotated[Optional[List[str]], Field(default=None, description="Favorite artists")]
+# class UserMusicPersonalityBase(BaseModel):
+#     genres: Annotated[Optional[List[str]], Field(default=None, description="Favorite genres")]
+#     artists: Annotated[Optional[List[str]], Field(default=None, description="Favorite artists")]
 
 
-class UserMusicPersonalityCreate(UserMusicPersonalityBase):
-    user_id: Annotated[uuid.UUID, Field(description="User's unique ID")]
+# class UserMusicPersonalityCreate(UserMusicPersonalityBase):
+#     user_id: Annotated[uuid.UUID, Field(description="User's unique ID")]
 
 
-class UserMusicPersonalityResponse(UserMusicPersonalityBase):
-    user_id: Annotated[uuid.UUID, Field(description="User's unique ID")]
-    updated_at: Annotated[datetime, Field(description="Last updated timestamp")]
+# class UserMusicPersonalityResponse(UserMusicPersonalityBase):
+#     user_id: Annotated[uuid.UUID, Field(description="User's unique ID")]
+#     updated_at: Annotated[datetime, Field(description="Last updated timestamp")]
 
-    class Config:
-        from_attributes = True
+#     class Config:
+#         from_attributes = True
 

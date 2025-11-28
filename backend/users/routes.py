@@ -11,14 +11,17 @@ router = APIRouter(prefix="/users", tags=["users"])
 # GET /users/me/
 @router.get("/me", response_model=UserResponse)
 async def read_current_user(current_user: User = Depends(get_current_user)):
-    return current_user
+    try:
+        return UserResponse.model_validate(current_user)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # GET /users/me/registration
 @router.get("/me/registration", response_model=UserRegistrationResponse)
 async def read_user_registration(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         registration = get_registration_status(db, current_user.user_id)
-        return registration
+        return UserRegistrationResponse.model_validate(registration)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

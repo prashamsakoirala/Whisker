@@ -46,12 +46,12 @@ class UserAuthorization(Base):
 	user: Mapped['User'] = relationship(back_populates='authorizations')
 
 
-class UserMusicPersonality(Base):
-	__tablename__ = "user_music_personality"
+# class UserMusicPersonality(Base):
+# 	__tablename__ = "user_music_personality"
 
-	user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.user_id"), primary_key=True)
-	genres: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
-	artists: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
-	updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+# 	user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.user_id"), primary_key=True)
+# 	genres: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
+# 	artists: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)
+# 	updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-	user: Mapped['User'] = relationship(back_populates='music_personality')
+# 	user: Mapped['User'] = relationship(back_populates='music_personality')
