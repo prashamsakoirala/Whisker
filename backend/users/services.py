@@ -3,6 +3,7 @@ from users.crud import *
 from users.schemas import *
 
 
+# do not use model to validate this, edit it so that it doesn't use model to validate
 def register_user(db: Session, user: UserCreate) -> UserResponse:
     existing_user = get_user_by_email(db, user.email)
     if existing_user:
@@ -63,7 +64,6 @@ def get_user_all_active_refresh_token(db: Session, user_id: uuid.UUID) -> UserAu
     if not existing:
         raise ValueError(f"No active authorization tokens found for this user")
     # TODO FIX THIS, return the list of models
-    return
     # return UserAuthorizationResponse.model_validate(existing)
 
 # TODO DO THIS ONCE YOU HAVE CRUD FOR SPOTIFY
