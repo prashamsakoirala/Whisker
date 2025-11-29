@@ -13,7 +13,6 @@ def register_user(db: Session, user: UserCreate) -> UserResponse:
 
     return user
 
-
 def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) -> UserAuthorization:
     existing = get_user_authorization(db, token.user_id, token.provider, token.status == AuthorizationStatus.ACTIVE)
     if existing:
@@ -25,7 +24,7 @@ def add_user_authorization_token(db: Session, token: UserAuthorizationCreate) ->
     return auth
 
 
-def update_registration_status(db: Session, status: UserRegistrationUpdate) -> UserRegistrationResponse:
+def update_registration_status(db: Session, status: UserRegistrationUpdate) -> UserRegistration:
     current_status = get_user_registration(db, status.user_id)
     if not current_status:
         raise ValueError("User registration status not found")
@@ -36,14 +35,14 @@ def update_registration_status(db: Session, status: UserRegistrationUpdate) -> U
     return reg
 
 
-def get_registration_status(db: Session, user_id: uuid.UUID) -> UserRegistrationResponse:
+def get_registration_status(db: Session, user_id: uuid.UUID) -> UserRegistration:
     reg = get_user_registration(db, user_id)
     if not reg:
         raise ValueError("User registration status not found")
     return reg
 
 
-def update_user_refresh_token_status(db: Session, token: UserAuthorizationCreate) -> UserAuthorizationResponse:
+def update_user_refresh_token_status(db: Session, token: UserAuthorizationCreate) -> UserAuthorization:
     existing = get_user_authorization(db, token.user_id, token.provider, AuthorizationStatus.ACTIVE)
     if not existing:
         raise ValueError(f"No active {token.provider} authorization token found for this user")
@@ -51,19 +50,20 @@ def update_user_refresh_token_status(db: Session, token: UserAuthorizationCreate
     return auth
 
 # gets the corresponding active token
-def get_user_refresh_token(db: Session, user_id: uuid.UUID, token_provider: str, token_status: AuthorizationStatus = AuthorizationStatus.ACTIVE) -> UserAuthorizationResponse:
+def get_user_refresh_token(db: Session, user_id: uuid.UUID, token_provider: str, token_status: AuthorizationStatus = AuthorizationStatus.ACTIVE) -> UserAuthorization:
     existing = get_user_authorization(db, user_id, token_provider, token_status)
     if not existing:
         raise ValueError(f"No {token_status} {token_provider} authorization token found for this user")
     return existing
 
 # how to return a list of them
-def get_user_all_active_refresh_token(db: Session, user_id: uuid.UUID) -> UserAuthorizationResponse:
+def get_user_all_active_refresh_token(db: Session, user_id: uuid.UUID) -> List[UserAuthorization]:
     existing = get_user_authorization(db, user_id, AuthorizationStatus.ACTIVE)
     if not existing:
         raise ValueError(f"No active authorization tokens found for this user")
     # TODO FIX THIS, return the list of models
     # return UserAuthorizationResponse.model_validate(existing)
+    return existing
 
 # TODO DO THIS ONCE YOU HAVE CRUD FOR SPOTIFY
 # get user music personality

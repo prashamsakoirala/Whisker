@@ -5,7 +5,6 @@ from datetime import datetime, timezone, timedelta
 from .models import Invitations
 from .types import InvitationStatus
 from .config import INVITATION_TOKEN_EXPIRE_MINUTES
-from users.crud import get_user_by_email
 
 
 def create_invitation(db: Session, inviter_id: uuid.UUID, invitee_email: str, invitation_code: Optional[str] = None, expires_in_minutes: int = INVITATION_TOKEN_EXPIRE_MINUTES) -> Invitations:
@@ -20,27 +19,22 @@ def get_invitation_by_code(db: Session, invitation_code: str) -> Optional[Invita
     return db.query(Invitations).filter(Invitations.invitation_code == invitation_code).first()
 
 def get_all_invitations_by_inviter_email(db: Session, inviter_email: str) -> List[Invitations]:
-    inviter_id = get_user_by_email(db, inviter_email).user_id
-    return db.query(Invitations).filter(Invitations.inviter_id == inviter_id).all()
+    return db.query(Invitations).filter(Invitations.inviter_email == inviter_email).all()
 
 def get_all_invitations_by_invitee_email(db: Session, invitee_email: str) -> List[Invitations]:
     return db.query(Invitations).filter(Invitations.invitee_email == invitee_email).all()
 
 def get_all_invitations_by_both_emails(db: Session, invitee_email: str, inviter_email: str) -> Optional[Invitations]:
-    inviter_id = get_user_by_email(db, inviter_email).user_id
-    return db.query(Invitations).filter(Invitations.invitee_email == invitee_email, Invitations.inviter_id == inviter_id).all()
+    return db.query(Invitations).filter(Invitations.invitee_email == invitee_email, Invitations.inviter_email == inviter_email).all()
 
 def get_most_recent_invitation_by_emails(db: Session, invitee_email: str, inviter_email: str) -> Optional[Invitations]:
-    inviter_id = get_user_by_email(db, inviter_email).user_id
-    return db.query(Invitations).filter(Invitations.invitee_email == invitee_email, Invitations.inviter_id == inviter_id).order_by(Invitations.sent_at.desc()).first()
+    return db.query(Invitations).filter(Invitations.invitee_email == invitee_email, Invitations.inviter_email == inviter_email).order_by(Invitations.sent_at.desc()).first()
 
 def get_most_recent_invitation_for_invitee(db: Session, invitee_email: str) -> Optional[Invitations]:
     return db.query(Invitations).filter(Invitations.invitee_email == invitee_email).order_by(Invitations.sent_at.desc()).first()
 
-
 def get_invitation_by_id(db: Session, invitation_id: uuid.UUID) -> Optional[Invitations]:
     return db.query(Invitations).filter(Invitations.id == invitation_id).first()
-
 
 def get_invitations_by_inviter(db: Session, inviter_id: uuid.UUID) -> List[Invitations]:
     return db.query(Invitations).filter(Invitations.inviter_id == inviter_id).all()

@@ -121,40 +121,40 @@ def delete_user_authorization(db: Session, authorization_id: uuid.UUID) -> bool:
 	return True
 
 
-def create_user_music_personality(db: Session, user_id: uuid.UUID, genres: Optional[List[str]] = None, artists: Optional[List[str]] = None) -> UserMusicPersonality:
-	existing = get_user_music_personality(db, user_id)
-	if existing:
-		return existing
-	mp = UserMusicPersonality(user_id=user_id, genres=genres, artists=artists)
-	db.add(mp)
-	db.commit()
-	db.refresh(mp)
-	return mp
+# def create_user_music_personality(db: Session, user_id: uuid.UUID, genres: Optional[List[str]] = None, artists: Optional[List[str]] = None) -> UserMusicPersonality:
+# 	existing = get_user_music_personality(db, user_id)
+# 	if existing:
+# 		return existing
+# 	mp = UserMusicPersonality(user_id=user_id, genres=genres, artists=artists)
+# 	db.add(mp)
+# 	db.commit()
+# 	db.refresh(mp)
+# 	return mp
 
 
-def get_user_music_personality(db: Session, user_id: uuid.UUID) -> Optional[UserMusicPersonality]:
-	return db.query(UserMusicPersonality).filter(UserMusicPersonality.user_id == user_id).first()
+# def get_user_music_personality(db: Session, user_id: uuid.UUID) -> Optional[UserMusicPersonality]:
+# 	return db.query(UserMusicPersonality).filter(UserMusicPersonality.user_id == user_id).first()
 
 
-def update_user_music_personality(db: Session, user_id: uuid.UUID, genres: Optional[List[str]] = None, artists: Optional[List[str]] = None) -> Optional[UserMusicPersonality]:
-	mp = get_user_music_personality(db, user_id)
-	if not mp:
-		return None
-	if genres is not None:
-		mp.genres = genres
-	if artists is not None:
-		mp.artists = artists
-	mp.updated_at = datetime.now()
-	db.commit()
-	db.refresh(mp)
-	return mp
+# def update_user_music_personality(db: Session, user_id: uuid.UUID, genres: Optional[List[str]] = None, artists: Optional[List[str]] = None) -> Optional[UserMusicPersonality]:
+# 	mp = get_user_music_personality(db, user_id)
+# 	if not mp:
+# 		return None
+# 	if genres is not None:
+# 		mp.genres = genres
+# 	if artists is not None:
+# 		mp.artists = artists
+# 	mp.updated_at = datetime.now()
+# 	db.commit()
+# 	db.refresh(mp)
+# 	return mp
 
 
-def delete_user_music_personality(db: Session, user_id: uuid.UUID) -> bool:
-	mp = get_user_music_personality(db, user_id)
-	if not mp:
-		return False
-	db.delete(mp)
-	db.commit()
-	return True
+# def delete_user_music_personality(db: Session, user_id: uuid.UUID) -> bool:
+# 	mp = get_user_music_personality(db, user_id)
+# 	if not mp:
+# 		return False
+# 	db.delete(mp)
+# 	db.commit()
+# 	return True
 

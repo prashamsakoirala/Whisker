@@ -4,6 +4,7 @@ from typing import Optional
 import uuid
 import hashlib
 from datetime import datetime, timezone, timedelta
+from backend.partnerships.services import create_new_partnership
 from .schemas import InvitationCreate, InvitationResponse, InvitationTokenPayload, InvitationTokenDecoded, InvitationDisplay
 from .invitations import create_invitation_token, decode_invitation_token
 from .types import InvitationStatus
@@ -102,7 +103,9 @@ def accept_invitation(db: Session, token: str, invitee_email: str) -> Invitation
         raise ValueError("Invalid user")
         
     updated_invitation = update_invitation_status(db, token, InvitationStatus.ACCEPTED)
-    return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=get_user(db, updated_invitation.inviter_id).email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
+    # create partnership here?
+    create_new_partnership(db, get_user(db, updated_invitation.inviter_id), get_user(db, updated_invitation.invitee_id))
+    return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=updated_invitation.inviter_email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
 
 
 def decline_invitation(db: Session, invitation_code: str, invitee_email: str) -> InvitationResponse:
@@ -114,7 +117,7 @@ def decline_invitation(db: Session, invitation_code: str, invitee_email: str) ->
         raise ValueError("Invalid user")
 
     updated_invitation = update_invitation_status(db, invitation_code, InvitationStatus.DECLINED)
-    return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=get_user(db, updated_invitation.inviter_id).email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
+    return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=updated_invitation.inviter_email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
 
 # only can be used by inviter to revoke
 def revoke_invitation(db: Session, invitation_code: str, inviter_email: str) -> InvitationResponse:
@@ -126,7 +129,7 @@ def revoke_invitation(db: Session, invitation_code: str, inviter_email: str) -> 
         raise ValueError("Invalid user")
 
     updated_invitation = update_invitation_status(db, invitation_code, InvitationStatus.REVOKED)
-    return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=get_user(db, updated_invitation.inviter_id).email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
+    return InvitationResponse(invitee_email=updated_invitation.invitee_email, inviter_email=updated_invitation.inviter_email, status=updated_invitation.status, expires_at=updated_invitation.expires_at)
 
 # Validate in routes?
 def validate_google_email(email: str) -> bool:

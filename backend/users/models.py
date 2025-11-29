@@ -20,7 +20,7 @@ class User(Base):
 
 	registrations: Mapped[List['UserRegistration']] = relationship(back_populates='user', cascade='all, delete-orphan')
 	authorizations: Mapped[List['UserAuthorization']] = relationship(back_populates='user', cascade='all, delete-orphan')
-	music_personality: Mapped[Optional['UserMusicPersonality']] = relationship(back_populates='user', uselist=False, cascade='all, delete-orphan')
+	# music_personality: Mapped[Optional['UserMusicPersonality']] = relationship(back_populates='user', uselist=False, cascade='all, delete-orphan')
 
 
 class UserRegistration(Base):
