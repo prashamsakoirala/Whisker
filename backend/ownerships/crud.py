@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import uuid
+from typing import Optional
 from .models import Ownerships
 
 # create ownership
@@ -15,10 +16,10 @@ def create_ownership(db: Session, partnership_id: uuid.UUID, cat_id: uuid.UUID) 
 
 # get ownership
 # maybe one to one relationship 
-def get_ownership_by_partnership_id(db: Session, partnership_id: uuid.UUID):
+def get_ownership_by_partnership_id(db: Session, partnership_id: uuid.UUID) -> Optional[Ownerships]:
 	return db.query(Ownerships).filter(Ownerships.partnership_id == partnership_id).first()
 
-def get_ownership_by_cat_id(db: Session, cat_id: uuid.UUID):
+def get_ownership_by_cat_id(db: Session, cat_id: uuid.UUID) -> Optional[Ownerships]:
 	return db.query(Ownerships).filter(Ownerships.cat_id == cat_id).first()
 
 # delete ownership
